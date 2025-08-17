@@ -1,0 +1,8 @@
+proj/.vscode/settings.json
+*.o
+proj/index.data
+proj/index.html
+proj/game_context.d
+*.d
+proj/index.js
+proj/index.wasm

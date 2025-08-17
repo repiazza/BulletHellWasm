@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <title>{{{ TITLE }}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* zera qualquer espaço e desabilita rolagem global */
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+
+    /* centraliza o canvas e evita que algo “cresça” a página */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* opcional: cor de fundo */
+      background: #111;
+    }
+
+    /* o canvas não deve criar linhas/rolagens */
+    canvas {
+      display: block;       /* tira espaço inline */
+      outline: none;        /* sem contorno de foco */
+      touch-action: none;   /* evita scroll em touch */
+      width: 640px;         /* idem tamanho lógico, se quiser */
+      height: 480px;        /* idem */
+    }
+
+    /* esconda elementos padrão do shell do Emscripten (se existirem) */
+    #status, #output, #spinner, .emscripten, .emscripten_border {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- foco direto no canvas -->
+    <canvas id="canvas" tabindex="1" autofocus></canvas>
+  </div>
+
+  <script>
+    (function () {
+      // expõe o canvas pro runtime do Emscripten
+      window.Module = window.Module || {};
+      var oCanvas = document.getElementById('canvas');
+      Module['canvas'] = oCanvas;
+
+      // evita perder contexto WebGL
+      oCanvas.addEventListener('webglcontextlost', function(e){ e.preventDefault(); }, false);
+
+      // força foco o quanto antes
+      function fFocusCanvas() {
+        try { oCanvas.focus(); } catch(e) {}
+      }
+      // alguns browsers precisam de um pequeno atraso
+      window.addEventListener('load', function(){ setTimeout(fFocusCanvas, 0); });
+      // fallback: qualquer clique volta o foco
+      oCanvas.addEventListener('click', fFocusCanvas);
+    })();
+  </script>
+
+  {{{ SCRIPT }}}
+</body>
+</html>
